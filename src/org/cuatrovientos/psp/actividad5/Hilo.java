@@ -5,6 +5,9 @@
  */
 package org.cuatrovientos.psp.actividad5;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author DavoLarris
@@ -15,27 +18,35 @@ public class Hilo implements Runnable{
     private String nombre;
     private int numeroIteraciones;
     private long milisegundosEntreIteraciones;
+    private int cont = 0;
     
     public Hilo(String nombre, int numeroIteraciones, long milisegundos) {
-        this.tarea = new Thread();
+        this.tarea = new Thread( this );
         this.nombre = nombre;
         this.milisegundosEntreIteraciones = milisegundos;
         this.numeroIteraciones = numeroIteraciones;
-        this.run();
+        tarea.start();
     }
     
     @Override
     public void run() {
-        do {
-        System.out.println(this.nombre + " - iteracion " + this.numeroIteraciones);
+        while (cont != this.numeroIteraciones) {
+        System.out.println(this.nombre + " - iteracion " + cont);
         estaVivo();
-        this.numeroIteraciones--;
-        } while (this.numeroIteraciones == 0);
+            try {
+                tarea.sleep(milisegundosEntreIteraciones);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Hilo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+        cont++;
+        };
     }
     
     public void estaVivo(){
         if (this.tarea.isAlive()) {
-            System.out.println("I'm alive!");
+            System.out.println(this.nombre + " - I'm alive!");
         }
     }
     
